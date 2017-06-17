@@ -1,27 +1,16 @@
 (function() {
   
-  // make a full screen canvas
+  var redraw = true;
   var canvas = document.createElement('canvas');
   document.body.appendChild(canvas);
   window.onresize = resizeWindow;
   resizeWindow();
-  
-  // resized on window resize
-  function resizeWindow() {
-    console.log('resizing');
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-  }
   
   // from tutorial https://www.youtube.com/watch?v=XNbtwyWh9HA
   // will make a triangle
   
   // webgl instead of 2d context
   var gl = canvas.getContext('webgl');
-  
-  // Clear the canvas with a colour
-  gl.clearColor(0.5, 0, 0, 1); // r, g, b, a
-  gl.clear(gl.COLOR_BUFFER_BIT);
   
   // shaders tell where to put things and what colour etc
   
@@ -73,7 +62,30 @@
   gl.enableVertexAttribArray(program.position);
   gl.vertexAttribPointer(program.position, 2, gl.FLOAT, false, 0, 0);
   
-  gl.drawArrays(gl.TRIANGLES, 0, vertices.length / 2); // each point has both x,y thus /2
+  drawLoop();
+  
+  // TODO: draw loop generally works but webgl probably needs to be told that the canvas is now a new size
+  function drawLoop() {
+    if (redraw) {
+      // console.log('drawing');
+      // Clear the canvas with a colour
+      gl.clearColor(Math.random(), Math.random(), Math.random(), 1); // r, g, b, a
+      gl.clear(gl.COLOR_BUFFER_BIT);
+      
+      gl.drawArrays(gl.TRIANGLES, 0, vertices.length / 2); // each point has both x,y thus /2
+      
+      redraw = false;
+    }
+    
+    window.requestAnimationFrame(drawLoop);
+  }
+  
+  // resized on window resize
+  function resizeWindow() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    redraw = true;
+  }
   
   window.gl = gl;
   
