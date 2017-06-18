@@ -42,12 +42,23 @@
   gl.attachShader(program, fragmentShader);
   gl.linkProgram(program);
   
-  // add the vertices for our triangle
+  // add the vertices for our triangles
   // (0,0) is centre, (-1,-1) bottom-left, (1,1) top-right
   var vertices = new Float32Array([
+    // triangle 1
     -0.5, -0.5, // bottom left x, y
     0.5, -0.5, // bottom right x, y
-    0.0, 0.5 // top x, y
+    0.0, 0.5, // top x, y
+    
+    // triangle 2
+    -0.8, 0.0, // bottom left x, y
+    -0.3, 0.0, // bottom right x, y
+    -0.4, 0.5, // top x, y
+    
+    // triangle 3
+    0.8, 0.0, // bottom left x, y
+    0.3, 0.0, // bottom right x, y
+    0.4, 0.5 // top x, y
   ]);
   
   var buffer = gl.createBuffer();
