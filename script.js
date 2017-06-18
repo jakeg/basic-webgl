@@ -70,6 +70,8 @@
       // console.log('drawing');
       // Clear the canvas with a colour
       gl.clearColor(Math.random(), Math.random(), Math.random(), 1); // r, g, b, a
+      
+      gl.viewport(0, 0, canvas.width, canvas.height);
       gl.clear(gl.COLOR_BUFFER_BIT);
       
       gl.drawArrays(gl.TRIANGLES, 0, vertices.length / 2); // each point has both x,y thus /2
