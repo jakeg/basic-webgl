@@ -42,32 +42,34 @@
   gl.attachShader(program, fragmentShader);
   gl.linkProgram(program);
   
-  // add the vertices for our triangles
-  // (0,0) is centre, (-1,-1) bottom-left, (1,1) top-right
-  var vertices = new Float32Array([
-    // triangle 1
-    -0.5, -0.5, // bottom left x, y
-    0.5, -0.5, // bottom right x, y
-    0.0, 0.5, // top x, y
-    
-    // triangle 2
-    -0.8, 0.0, // bottom left x, y
-    -0.3, 0.0, // bottom right x, y
-    -0.4, 0.5, // top x, y
-    
-    // triangle 3
-    0.8, 0.0, // bottom left x, y
-    0.3, 0.0, // bottom right x, y
-    0.4, 0.5 // top x, y
-  ]);
+  // TODO: make polygons with any number of vertices instead
+  var triangles = [
+    // [x, y], [x, y], [x, y] for 3 points of triangle
+    // (0,0) is centre, (-1,-1) bottom-left, (1,1) top-right
+    [[-0.5, -0.5], [0.5, -0.5], [0.0, 0.5]],
+    [[-0.8, 0.0], [-0.3, 0.0], [-0.4, 0.5]],
+    [[0.8, 0.0], [0.3, 0.0], [0.4, 0.5]]
+  ];
   
+  // make a single flat Float32Array with all the triangles' vertices
+  var vertices = [];
+  triangles.forEach(function(triangle) {
+    triangle.forEach(function(vertex) {
+      vertices.push(vertex[0]); // x
+      vertices.push(vertex[1]); // y
+    });
+  });
+  // add the vertices for our triangles
+  var vertices = new Float32Array(vertices);
+  
+  // make a buffer to send to the GPU
   var buffer = gl.createBuffer();
   gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
   gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
   
   gl.useProgram(program);
   program.color = gl.getUniformLocation(program, 'color');
-  gl.uniform4fv(program.color, [1, 1, 0, 1]); // r, g, b, a (except a doesn't actually seem to change opacity)
+  gl.uniform4fv(program.color, [1, 1, 0, 1]); // r, g, b, a (TODO: except a doesn't actually seem to change opacity)
   
   program.position = gl.getAttribLocation(program, 'position');
   gl.enableVertexAttribArray(program.position);
@@ -75,14 +77,14 @@
   
   drawLoop();
   
-  // TODO: draw loop generally works but webgl probably needs to be told that the canvas is now a new size
+  // our main draw loop
   function drawLoop() {
     if (redraw) {
       // console.log('drawing');
       // Clear the canvas with a colour
       gl.clearColor(Math.random(), Math.random(), Math.random(), 1); // r, g, b, a
       
-      gl.viewport(0, 0, canvas.width, canvas.height);
+      gl.viewport(0, 0, canvas.width, canvas.height); // in case window.resize
       gl.clear(gl.COLOR_BUFFER_BIT);
       
       gl.drawArrays(gl.TRIANGLES, 0, vertices.length / 2); // each point has both x,y thus /2
